@@ -115,17 +115,21 @@ class RGeocoder(object):
         else: # Multi-process
             self.tree = KDTree_MP.cKDTree_MP(coordinates)
 
-    def query(self, coordinates):
-        """
-        Function to query the K-D tree to find the nearest city
-        Args:
-        coordinates (list): List of tuple coordinates, i.e. [(latitude, longitude)]
-        """
-        if self.mode == 1:
-            _, indices = self.tree.query(coordinates, k=1)
-        else:
-            _, indices = self.tree.pquery(coordinates, k=1)
-        return [self.locations[index] for index in indices]
+     def query(self, coordinates):
+         """
+         Function to query the K-D tree to find the nearest city
+         Args:
+         coordinates (list): List of tuple coordinates, i.e. [(latitude, longitude)]
+         """
+         if self.mode == 1:
+             _, indices = self.tree.query(coordinates, k=1)
+         else:
+             _, indices = self.tree.pquery(coordinates, k=1)
+         
+         if type(indices) is int: # Fix for single result
+             indices = [indices]
+          
+         return [self.locations[index] for index in indices]
 
     def load(self, stream):
         """
